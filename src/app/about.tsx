@@ -4,7 +4,7 @@ import { Text, View } from 'react-native'
 export default function About() {
   return (
     <View>
-      <Text>About</Text>
+      <Text className='font-3xl'>About</Text>
     </View>
   )
 }

@@ -3,8 +3,8 @@ import React from 'react'
 
 export default function Home() {
   return (
-    <View>
-      <Text>Tabs</Text>
+    <View className="bg-amber-600 flex-1 justify-center">
+      <Text className='text-5xl font-bold text-center'>Home</Text>
     </View>
   )
 }
