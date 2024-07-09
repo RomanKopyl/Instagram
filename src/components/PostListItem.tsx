@@ -1,14 +1,12 @@
 import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Image, Text, View, useWindowDimensions } from 'react-native';
-import { Cloudinary } from "@cloudinary/url-gen";
 import { AdvancedImage } from 'cloudinary-react-native';
+import React from 'react';
+import { Text, View, useWindowDimensions } from 'react-native';
 
 // Import required actions and qualifiers.
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
-import { byRadius } from "@cloudinary/url-gen/actions/roundCorners";
-import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
+import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { cld } from '~/lib/cloudinary';
 
 export interface PostInterface {
@@ -18,7 +16,7 @@ export interface PostInterface {
   caption: string;
   user: {
     id: string;
-    avatar_url: string;
+    avatar_url?: string;
     image_url: string;
     username: string;
   }
@@ -35,7 +33,7 @@ const PostListItem: React.FC<Props> = ({ post }) => {
   const image = cld.image(post.image);
   image.resize(thumbnail().width(width).height(width));
   
-  const avatar = cld.image(post.user.avatar_url);
+  const avatar = cld.image(post.user?.avatar_url);
   avatar.resize(thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face())));
 
   return (

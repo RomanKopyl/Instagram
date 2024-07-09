@@ -1,12 +1,18 @@
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Image, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Text, TextInput, View } from 'react-native';
 import { uploadImage } from '~/lib/cloudinary';
+import { supabase } from '~/lib/supabase';
 import Button from '~/src/components/Button';
+import { useAuth } from '~/src/providers/AuthProvider';
 
 export default function CreatePost() {
   const [caption, setCaption] = useState('');
   const [image, setImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { session } = useAuth();
 
   useEffect(() => {
     if (!image) {
@@ -32,13 +38,32 @@ export default function CreatePost() {
     if (!image) {
       return;
     }
+    setIsLoading(true);
     try {
       const response = await uploadImage(image);
+
       // save the post in database
-      console.log('image id: ', response?.public_id);
+      const { data, error } = await supabase
+        .from('posts')
+        .insert([
+          {
+            caption,
+            image: response?.public_id,
+            user_id: session?.user.id,
+          },
+        ])
+        .select();
+
+      if (error) {
+        Alert.alert('Something went wrong');
+        return;
+      }
+      router.push('/(tabs)');
 
     } catch (error) {
       console.log('ERROR', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,7 +92,11 @@ export default function CreatePost() {
 
       {/* Button */}
       <View className='mt-auto w-full'>
-        <Button title='Share' onPress={createPost} />
+        <Button
+          title='Share'
+          onPress={createPost}
+          disabled={isLoading}
+        />
       </View>
     </View>
   )
