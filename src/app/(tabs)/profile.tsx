@@ -2,6 +2,8 @@ import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { Image, Text, TextInput, View } from 'react-native';
 import Button from '../../components/Button';
+import StyledTextInput from '~/src/components/StyledTextInput';
+import { supabase } from '~/lib/supabase';
 
 export default function Profile() {
   const [image, setImage] = useState<string | null>(null);
@@ -41,17 +43,16 @@ export default function Profile() {
 
       {/* Form */}
       <Text className="mb-2 text-gray-500 font-semibold">Username</Text>
-      <TextInput
+      <StyledTextInput
         placeholder='Username'
         value={username}
         onChangeText={setUsername}
-        className='border border-gray-500 p-3 rounded-md'
       />
 
       {/* Button */}
       <View className="gap-2 mt-auto">
         <Button title="Update profile" />
-        <Button title="Sign out" />
+        <Button title="Sign out" onPress={() => supabase.auth.signOut()} />
       </View>
     </View>
   );
