@@ -1,6 +1,8 @@
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Image, Pressable, Text, TextInput, View } from 'react-native';
+import { Image, Text, TextInput, View } from 'react-native';
+import { uploadImage } from '~/lib/cloudinary';
+import Button from '~/src/components/Button';
 
 export default function CreatePost() {
   const [caption, setCaption] = useState('');
@@ -18,11 +20,25 @@ export default function CreatePost() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.5,
     });
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+    }
+  };
+
+  const createPost = async () => {
+    if (!image) {
+      return;
+    }
+    try {
+      const response = await uploadImage(image);
+      // save the post in database
+      console.log('image id: ', response?.public_id);
+
+    } catch (error) {
+      console.log('ERROR', error);
     }
   };
 
@@ -51,9 +67,7 @@ export default function CreatePost() {
 
       {/* Button */}
       <View className='mt-auto w-full'>
-        <Pressable className='bg-blue-500 w-full p-3 items-center rounded-md'>
-          <Text className='text-white font-semibold'>Share</Text>
-        </Pressable>
+        <Button title='Share' onPress={createPost} />
       </View>
     </View>
   )
